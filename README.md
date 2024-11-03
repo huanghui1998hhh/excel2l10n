@@ -43,6 +43,11 @@ dart pub add dev:excel2l10n
 
         * `genL10nYaml: true`: Whether to generate `l10n.yaml` file.
 
+    1. Details for target **localizations**:
+
+        * No need to generate `.arb` file, directly generate `.dart` file.
+        * Generate `TextSpan` for `placeholders`. It means you can use `Text.rich` to display the value.
+
 1. Your table should look like this:
 
     | key | description | en | zh | ... |

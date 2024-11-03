@@ -3,6 +3,7 @@ import '../exporter/exporter.dart';
 import '../settings.dart';
 import 'arb.dart';
 import 'getx.dart';
+import 'localizations.dart';
 
 abstract class Target {
   factory Target(L10nSheet sheetData) {
@@ -26,6 +27,8 @@ abstract class Target {
                 } ??
                 false,
           );
+        case 'localizations':
+          return Localizations.withSheetData(sheetData);
       }
     } catch (e) {
       throw _TargetSettingsError(name);
