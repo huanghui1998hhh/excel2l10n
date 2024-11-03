@@ -25,11 +25,23 @@ dart pub add dev:excel2l10n
         # It's your spreadsheet's token, usually in your spreadsheet url, 
         # like https://xxxxxxxxxx.feishu.cn/sheets/:spreadsheet_token
         spreadsheet_token: xxxxxxxxxxxxxxxxxxxxxxxxxxx
-    # Currently only supports getx
-    target: getx
+    # Currently supports getx and arb
+    target: arb
     # The output directory
     output_dir: output
     ```
+
+    If your target has additional settings, you can add them in the `target` section like this:
+
+    ```yaml
+    target:
+        name: arb
+        # Other settings
+    ```
+
+    1. Details for target **arb**:
+
+        * `genL10nYaml: true`: Whether to generate `l10n.yaml` file.
 
 1. Your table should look like this:
 

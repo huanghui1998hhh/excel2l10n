@@ -82,7 +82,7 @@ class _GetTranslations extends Exporter {
       for (final e in sheetData.data.entries) {
         final value = e.value.data[language];
         if (value == null) continue;
-        temp.putIfAbsent(e.key, () => value);
+        temp[e.key] = value;
       }
       mapDataTemp[language] = temp;
     }
