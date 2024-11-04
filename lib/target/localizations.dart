@@ -205,7 +205,7 @@ class _LocalizationsLanguage extends Exporter {
         buffer.writeln("  String get $key => '${value.escaping}';");
       } else {
         buffer.writeln(
-          "String $key(${placeholderMatches.map((e) => 'String ${e.group(1)}').join(', ')}) => '${value.replaceAllMapped(_placeholderReg, (match) => '\${${match.group(1)}}').escaping}';",
+          "String $key(${placeholderMatches.map((e) => 'String ${e.group(1)}').join(', ')}) => '${value.splitMapJoin(_placeholderReg, onMatch: (match) => '\${${match.group(1)}}', onNonMatch: (e) => e.escaping)}';",
         );
         buffer.writeln();
         buffer.writeln('  @override');

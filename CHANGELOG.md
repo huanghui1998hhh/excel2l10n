@@ -29,3 +29,7 @@
 ## 0.1.1
 
 * Add feature **escaping** for target `localizations`
+
+## 0.1.1+1
+
+* Fix **escaping** error when build get String method for target `localizations`
