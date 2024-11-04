@@ -21,3 +21,11 @@
   * No need to generate `.arb` file, directly generate `.dart` file.
   * Generate `TextSpan` for `placeholders`. It means you can use `Text.rich` to display the value.
   * Other features supported are the same as target `arb`.
+
+## 0.1.0
+
+* Relaxing dart version restrictions 3.5.3->3.3.0
+
+## 0.1.1
+
+* Add feature **escaping** for target `localizations`

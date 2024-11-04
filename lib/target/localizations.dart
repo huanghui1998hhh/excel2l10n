@@ -202,15 +202,15 @@ class _LocalizationsLanguage extends Exporter {
       final placeholderMatches = row.placeholderMatches;
       buffer.writeln('  @override');
       if (placeholderMatches.isEmpty) {
-        buffer.writeln("  String get $key => '$value';");
+        buffer.writeln("  String get $key => '${value.escaping}';");
       } else {
         buffer.writeln(
-          "String $key(${placeholderMatches.map((e) => 'String ${e.group(1)}').join(', ')}) => '${value.replaceAllMapped(_placeholderReg, (match) => '\${${match.group(1)}}')}';",
+          "String $key(${placeholderMatches.map((e) => 'String ${e.group(1)}').join(', ')}) => '${value.replaceAllMapped(_placeholderReg, (match) => '\${${match.group(1)}}').escaping}';",
         );
         buffer.writeln();
         buffer.writeln('  @override');
         buffer.writeln(
-          "  TextSpan ${key}Span(${placeholderMatches.map((e) => 'TextSpan ${e.group(1)}').join(', ')}) => TextSpan(children: [${value.splitMapJoin(_placeholderReg, onMatch: (match) => '${match.group(1)},', onNonMatch: (e) => "TextSpan(text: '$e'),")}],);",
+          "  TextSpan ${key}Span(${placeholderMatches.map((e) => 'TextSpan ${e.group(1)}').join(', ')}) => TextSpan(children: [${value.splitMapJoin(_placeholderReg, onMatch: (match) => '${match.group(1)},', onNonMatch: (e) => "TextSpan(text: '${e.escaping}'),")}],);",
         );
       }
       buffer.writeln();
@@ -220,4 +220,8 @@ class _LocalizationsLanguage extends Exporter {
 
     await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
   }
+}
+
+extension on String {
+  String get escaping => replaceAll(r"'", r"\'").replaceAll(r'$', r'\$');
 }
