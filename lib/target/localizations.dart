@@ -98,7 +98,7 @@ import 'package:intl/intl.dart' as intl;
     buffer.writeln();
 
     buffer.writeln('''
-abstract class $className ${currentTarget.genExtension ? 'extends ${currentTarget.getMixinName()} ' : ''} {
+abstract class $className with ${className}Mixin ${currentTarget.genExtension ? ', ${currentTarget.getMixinName()} ' : ''} {
   $className(String locale) : localeName = intl.Intl.canonicalizedLocale(locale);
 
   final String localeName;
@@ -124,8 +124,10 @@ abstract class $className ${currentTarget.genExtension ? 'extends ${currentTarge
     }
 
     buffer.writeln('  ];');
+    buffer.writeln('}');
     buffer.writeln();
 
+    buffer.writeln('mixin ${className}Mixin {');
     for (final e in sheetData.data.entries) {
       final key = e.key;
       final row = e.value;
@@ -146,7 +148,6 @@ abstract class $className ${currentTarget.genExtension ? 'extends ${currentTarge
       }
       buffer.writeln();
     }
-
     buffer.writeln('}');
     buffer.writeln();
 
@@ -286,9 +287,14 @@ class _LocalizationsExtension extends _LocalizationsLanguageExporter {
 
   @override
   Future<void> buildFile(File outputFile, L10nSheet sheetData) async {
-    await outputFile.writeAsString('''
-mixin class $mixinName {}
-''');
+    final buffer = StringBuffer();
+    buffer.writeln("import '${currentTarget.outputFileName}.dart';");
+    buffer.writeln();
+
+    buffer.writeln(
+      'mixin ${currentTarget.getMixinName()} on ${currentTarget.className}Mixin {}',
+    );
+    await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
   }
 }
 
@@ -318,7 +324,7 @@ class _LocalizationsExtensionLanguage extends NoOverrideExporter {
     );
     buffer.writeln();
     buffer.writeln(
-      'mixin $mixinName on $className, ${currentTarget.getMixinName()} {}',
+      'mixin $mixinName on ${className}Mixin, ${currentTarget.getMixinName()} {}',
     );
 
     await outputFile.writeAsString(DartFormatter().format(buffer.toString()));

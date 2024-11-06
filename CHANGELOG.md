@@ -50,3 +50,7 @@
 
     You can write your own localizations as a supplement. And it will not be 
     overwritten by subsequent generation operations.
+
+## 0.1.2+1
+
+* Fix **extension** error when build extension mixin for target `localizations`
