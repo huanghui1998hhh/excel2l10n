@@ -5,6 +5,7 @@ import 'package:yaml/yaml.dart';
 final dio = Dio();
 
 abstract class Settings {
-  static final map = loadYaml(File('excel2l10n.yaml').readAsStringSync());
+  static final map =
+      loadYaml(File('excel2l10n.yaml').readAsStringSync()) as YamlMap;
   static String get outputDirPath => map['output_dir'] ?? 'output';
 }

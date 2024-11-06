@@ -33,3 +33,20 @@
 ## 0.1.1+1
 
 * Fix **escaping** error when build get String method for target `localizations`
+
+## 0.1.2
+
+* Add feature **extension** for target `localizations`.
+
+    You can write your `excel2l10n.yaml` like this:
+
+      ```yaml
+      target:
+        name: localizations
+        genExtension: true
+      ```
+
+    to additional generate a base class for your `localizations` class.
+
+    You can write your own localizations as a supplement. And it will not be 
+    overwritten by subsequent generation operations.

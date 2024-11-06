@@ -35,3 +35,19 @@ abstract class Exporter extends BaseExporter {
 
   Future<void> buildFile(File outputFile, L10nSheet sheetData);
 }
+
+abstract class NoOverrideExporter extends Exporter {
+  const NoOverrideExporter();
+
+  @override
+  Future<void> exportWith(L10nSheet sheetData) async {
+    File outputFile = File(
+      '${Settings.outputDirPath}/$fullFileName',
+    );
+    if (outputFile.existsSync()) {
+      return;
+    }
+    outputFile = await outputFile.create(recursive: true);
+    await buildFile(outputFile, sheetData);
+  }
+}

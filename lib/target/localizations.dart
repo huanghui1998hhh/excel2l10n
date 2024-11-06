@@ -4,31 +4,72 @@ import 'package:dart_style/dart_style.dart';
 
 import '../excel/excel.dart';
 import '../exporter/exporter.dart';
+import '../settings.dart';
 import 'target.dart';
 
+Localizations get currentTarget => Target.current as Localizations;
+
 class Localizations extends Target {
-  Localizations.withSheetData(super.sheetData)
-      : exporters = [
+  Localizations.withSheetData(
+    super.sheetData, {
+    required this.outputFileName,
+    required this.className,
+    required this.genExtension,
+  })  : exporters = [
           const _Localizations(),
           for (final language in sheetData.languages)
-            _LocalizationsLanguage(language),
+            _LocalizationsLanguage(
+              language: language,
+            ),
+          if (genExtension) ...[
+            const _LocalizationsExtension(),
+            for (final language in sheetData.languages)
+              _LocalizationsExtensionLanguage(
+                language: language,
+              ),
+          ],
         ],
         super.withSheetData();
 
+  final String outputFileName;
+  final bool genExtension;
+  final String className;
+
+  String getClassName({String? language}) =>
+      language == null ? className : '$className${language.firstUpperCase}';
+  String getMixinName({String? language}) =>
+      '${className}Extension${language == null ? '' : language.firstUpperCase}Mixin';
+
   @override
   final List<Exporter> exporters;
+}
+
+abstract class _LocalizationsLanguageExporter extends Exporter {
+  const _LocalizationsLanguageExporter();
+
+  @override
+  Future<void> exportWith(L10nSheet sheetData) async {
+    File outputFile = File(
+      '${Settings.outputDirPath}/$fullFileName',
+    );
+    if (outputFile.existsSync()) {
+      return;
+    }
+    outputFile = await outputFile.create(recursive: true);
+    await buildFile(outputFile, sheetData);
+  }
 }
 
 class _Localizations extends Exporter {
   const _Localizations();
 
   @override
-  String get fileName => 'app_localizations';
+  String get fileName => currentTarget.outputFileName;
 
   @override
   String? get extensionName => 'dart';
 
-  String get className => 'L';
+  String get className => currentTarget.className;
 
   @override
   Future<void> buildFile(File outputFile, L10nSheet sheetData) async {
@@ -50,10 +91,14 @@ import 'package:intl/intl.dart' as intl;
     for (final language in languages) {
       buffer.writeln("import 'app_localizations_$language.dart';");
     }
+    if (currentTarget.genExtension) {
+      buffer
+          .writeln("import 'extension_${currentTarget.outputFileName}.dart';");
+    }
     buffer.writeln();
 
     buffer.writeln('''
-abstract class $className {
+abstract class $className ${currentTarget.genExtension ? 'extends ${currentTarget.getMixinName()} ' : ''} {
   $className(String locale) : localeName = intl.Intl.canonicalizedLocale(locale);
 
   final String localeName;
@@ -161,15 +206,17 @@ extension on DataRow {
 }
 
 class _LocalizationsLanguage extends Exporter {
-  const _LocalizationsLanguage(this.language);
+  const _LocalizationsLanguage({
+    required this.language,
+  });
 
   @override
-  String get fileName => 'app_localizations_$language';
+  String get fileName => '${currentTarget.outputFileName}_$language';
 
   @override
   String? get extensionName => 'dart';
 
-  String get className => 'L';
+  String get className => currentTarget.className;
 
   final String language;
 
@@ -180,14 +227,18 @@ class _LocalizationsLanguage extends Exporter {
     buffer.writeln('// ignore_for_file: type=lint');
     buffer.writeln();
     buffer.writeln("import 'package:flutter/painting.dart';");
-    buffer.writeln("import 'app_localizations.dart';");
+    buffer.writeln("import '${currentTarget.outputFileName}.dart';");
+    if (currentTarget.genExtension) {
+      buffer.writeln(
+        "import 'extension_${currentTarget.outputFileName}_$language.dart';",
+      );
+    }
     buffer.writeln();
-    final thisFileClassName = '$className${language.firstUpperCase}';
     buffer.writeln(
-      'class $thisFileClassName extends $className {',
+      'class ${currentTarget.getClassName(language: language)} extends $className ${currentTarget.genExtension ? 'with ${currentTarget.getMixinName(language: language)} ' : ''} {',
     );
     buffer.writeln(
-      "  $thisFileClassName([String locale = '$language']) : super(locale);",
+      "  ${currentTarget.getClassName(language: language)}([String locale = '$language']) : super(locale);",
     );
     buffer.writeln();
 
@@ -217,6 +268,58 @@ class _LocalizationsLanguage extends Exporter {
     }
     buffer.writeln('}');
     buffer.writeln();
+
+    await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
+  }
+}
+
+class _LocalizationsExtension extends _LocalizationsLanguageExporter {
+  const _LocalizationsExtension();
+
+  @override
+  String get fileName => 'extension_${currentTarget.outputFileName}';
+
+  @override
+  String? get extensionName => 'dart';
+
+  String get mixinName => currentTarget.getMixinName();
+
+  @override
+  Future<void> buildFile(File outputFile, L10nSheet sheetData) async {
+    await outputFile.writeAsString('''
+mixin class $mixinName {}
+''');
+  }
+}
+
+class _LocalizationsExtensionLanguage extends NoOverrideExporter {
+  const _LocalizationsExtensionLanguage({
+    required this.language,
+  });
+
+  final String language;
+
+  @override
+  String get fileName => 'extension_${currentTarget.outputFileName}_$language';
+
+  @override
+  String? get extensionName => 'dart';
+
+  String get className => currentTarget.className;
+  String get mixinName => currentTarget.getMixinName(language: language);
+
+  @override
+  Future<void> buildFile(File outputFile, L10nSheet sheetData) async {
+    final buffer = StringBuffer();
+
+    buffer.writeln("import '${currentTarget.outputFileName}.dart';");
+    buffer.writeln(
+      "import 'extension_${currentTarget.outputFileName}.dart';",
+    );
+    buffer.writeln();
+    buffer.writeln(
+      'mixin $mixinName on $className, ${currentTarget.getMixinName()} {}',
+    );
 
     await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
   }
