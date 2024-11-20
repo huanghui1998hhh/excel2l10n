@@ -54,3 +54,8 @@
 ## 0.1.2+1
 
 * Fix **extension** error when build extension mixin for target `localizations`
+
+## 0.1.3
+
+* Optimize generating `TextSpan` for target `localizations`.
+It will not generate `TextSpan(text: '')`.

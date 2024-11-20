@@ -262,7 +262,7 @@ class _LocalizationsLanguage extends Exporter {
         buffer.writeln();
         buffer.writeln('  @override');
         buffer.writeln(
-          "  TextSpan ${key}Span(${placeholderMatches.map((e) => 'TextSpan ${e.group(1)}').join(', ')}) => TextSpan(children: [${value.splitMapJoin(_placeholderReg, onMatch: (match) => '${match.group(1)},', onNonMatch: (e) => "TextSpan(text: '${e.escaping}'),")}],);",
+          "  TextSpan ${key}Span(${placeholderMatches.map((e) => 'TextSpan ${e.group(1)}').join(', ')}) => TextSpan(children: [${value.splitMapJoin(_placeholderReg, onMatch: (match) => '${match.group(1)},', onNonMatch: (e) => e.isEmpty ? '' : "TextSpan(text: '${e.escaping}'),")}],);",
         );
       }
       buffer.writeln();
