@@ -59,3 +59,7 @@
 
 * Optimize generating `TextSpan` for target `localizations`.
 It will not generate `TextSpan(text: '')`.
+
+## 0.1.4
+
+* User `InlineSpan` instead of `TextSpan` when generating `placeholders`.

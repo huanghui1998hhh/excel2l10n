@@ -143,7 +143,7 @@ abstract class $className with ${className}Mixin ${currentTarget.genExtension ? 
         );
         buffer.writeln();
         buffer.writeln(
-          '  TextSpan ${key}Span(${placeholderMatches.map((e) => 'TextSpan ${e.group(1)}').join(', ')});',
+          '  TextSpan ${key}Span(${placeholderMatches.map((e) => 'InlineSpan ${e.group(1)}').join(', ')});',
         );
       }
       buffer.writeln();
@@ -262,7 +262,7 @@ class _LocalizationsLanguage extends Exporter {
         buffer.writeln();
         buffer.writeln('  @override');
         buffer.writeln(
-          "  TextSpan ${key}Span(${placeholderMatches.map((e) => 'TextSpan ${e.group(1)}').join(', ')}) => TextSpan(children: [${value.splitMapJoin(_placeholderReg, onMatch: (match) => '${match.group(1)},', onNonMatch: (e) => e.isEmpty ? '' : "TextSpan(text: '${e.escaping}'),")}],);",
+          "  TextSpan ${key}Span(${placeholderMatches.map((e) => 'InlineSpan ${e.group(1)}').join(', ')}) => TextSpan(children: [${value.splitMapJoin(_placeholderReg, onMatch: (match) => '${match.group(1)},', onNonMatch: (e) => e.isEmpty ? '' : "TextSpan(text: '${e.escaping}'),")}],);",
         );
       }
       buffer.writeln();
