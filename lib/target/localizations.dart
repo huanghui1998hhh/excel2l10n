@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:dart_style/dart_style.dart';
-
 import '../excel/excel.dart';
 import '../exporter/exporter.dart';
 import '../settings.dart';
@@ -191,7 +189,7 @@ $className lookup$className(Locale locale) {
 
 ''');
 
-    await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
+    await outputFile.writeAsString(dartFormatter.format(buffer.toString()));
   }
 }
 
@@ -270,7 +268,7 @@ class _LocalizationsLanguage extends Exporter {
     buffer.writeln('}');
     buffer.writeln();
 
-    await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
+    await outputFile.writeAsString(dartFormatter.format(buffer.toString()));
   }
 }
 
@@ -294,7 +292,7 @@ class _LocalizationsExtension extends _LocalizationsLanguageExporter {
     buffer.writeln(
       'mixin ${currentTarget.getMixinName()} on ${currentTarget.className}Mixin {}',
     );
-    await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
+    await outputFile.writeAsString(dartFormatter.format(buffer.toString()));
   }
 }
 
@@ -327,7 +325,7 @@ class _LocalizationsExtensionLanguage extends NoOverrideExporter {
       'mixin $mixinName on ${className}Mixin, ${currentTarget.getMixinName()} {}',
     );
 
-    await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
+    await outputFile.writeAsString(dartFormatter.format(buffer.toString()));
   }
 }
 

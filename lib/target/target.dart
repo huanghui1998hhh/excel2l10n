@@ -1,4 +1,9 @@
 import 'dart:collection';
+import 'dart:io';
+
+import 'package:dart_style/dart_style.dart';
+import 'package:meta/meta.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import '../excel/excel.dart';
 import '../exporter/exporter.dart';
@@ -78,4 +83,18 @@ abstract class Target {
 class _TargetSettingsError extends FormatException {
   const _TargetSettingsError([String? target])
       : super('Yaml target($target) settings error');
+}
+
+final dartFormatter = DartFormatter(
+  languageVersion: getDartLanguageVersion(),
+);
+
+@visibleForTesting
+Version getDartLanguageVersion() {
+  final version = Platform.version.split(' ').first;
+  final parts = version.split('.');
+  if (parts.length >= 2) {
+    return Version(int.parse(parts[0]), int.parse(parts[1]), 0);
+  }
+  return Version(3, 0, 0);
 }

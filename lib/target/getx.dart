@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dart_style/dart_style.dart';
-
 import '../excel/excel.dart';
 import '../exporter/exporter.dart';
 import 'target.dart';
@@ -51,7 +49,7 @@ class _GetHelper extends Exporter {
     }
     buffer.writeln('}');
 
-    await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
+    await outputFile.writeAsString(dartFormatter.format(buffer.toString()));
   }
 }
 
@@ -91,6 +89,6 @@ class _GetTranslations extends Exporter {
         .writeln('  Map<String, Map<String, String>> get keys => $mapString;');
     buffer.writeln('}');
 
-    await outputFile.writeAsString(DartFormatter().format(buffer.toString()));
+    await outputFile.writeAsString(dartFormatter.format(buffer.toString()));
   }
 }
